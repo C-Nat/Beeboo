@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Aid Quiz</title>
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        position: relative;
+        background-color: rgba(246, 244, 224, 0.838);
+    }
+    .copyright {
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 10px;
+        background-color: #f4f4f4;
+        color: #333;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+      }
+      .author {
+        position: fixed;
+        top: 0;
+        right: 0;
+        padding: 5px;
+        color: #333;
+        font-size: 10px;
+        font-family: Arial, sans-serif;
+      }
+
+    
+      .copyright img {
+        margin-left: 5px;
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+      }
+
+    .question {
+        margin: 20px 0;
+    }
+
+    button {
+        padding: 10px 20px;
+        margin: 10px;
+    }
+
+    .options {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .options button {
+        margin: 5px;
+    }
+ 
+    .correct {
+        background-color: lightgreen;
+    }
+
+    .wrong {
+        background-color: lightcoral;
+    }
+
+    .page-number {
+        position: absolute;
+        bottom: -80px;
+        right: 10px;
+    }
+
+    .navigation {
+        position: absolute;
+        bottom: -50px;
+        left: 10px;
+    }
+
+    #nextQuestion {
+        position: absolute;
+        bottom: -50px;
+        right: 10px;
+    }
+
+</style>
+</head>
+<body>
+<div id="quiz">
+    <div class="question"></div>
+    <div class="options"></div>
+    <button id="nextQuestion">Next Question &rarr;</button>
+    <button id="prevQuestion" class="navigation">&larr; Previous Question</button>
+    <div class="page-number"></div>
+    <div id="score"></div>
+    <div class="copyright">
+        <span>&copy; Hong Kong Red Cross</span></div>
+    <div class="author">
+        <span>Nat.C 2025</span></div>
+</div>
+
+<button id="restartQuiz">&#8635; Restart Quiz</button>
+
+<script>
+    const questions = [
+        {
+            question: "Question 1:急救的目的是：",
+            options: [
+                { text: "A：讓傷者盡快離開意外現場", value: "A" },
+                { text: "B：避免受傷", value: "B" },
+                { text: "C：讓傷者進行飲食", value: "C" },
+                { text: "D：維持生命", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 2:成人的正常脈搏為每分鐘多少次？",
+            options: [
+                { text: "A：40-60", value: "A" },
+                { text: "B：50-70", value: "B" },
+                { text: "C：60-100", value: "C" },
+                { text: "D：70-90", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 3:以下哪項情況不可以移動傷病者",
+            options: [
+                { text: "A：懷疑傷病者有脊椎骨折", value: "A" },
+                { text: "B：現場環境對傷病者的安全構成威脅", value: "B" },
+                { text: "C：傷病者俯臥，並且無反應", value: "C" },
+                { text: "D：傷病者毫無反應並嘔吐物阻塞氣道導致呼吸苦難", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 4:下列哪一情況須作優先處理？",
+            options: [
+                { text: "A：手掌出血", value: "A" },
+                { text: "B：窒息", value: "B" },
+                { text: "C：骨折", value: "C" },
+                { text: "D：手掌燒傷", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 5:兒童的正常呼吸為每分鐘多少次？",
+            options: [
+                { text: "A：10-15", value: "A" },
+                { text: "B：31-40", value: "B" },
+                { text: "C：16-30", value: "C" },
+                { text: "D：20-40", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 6:急救員進入災場前，應該優先考慮：",
+            options: [
+                { text: "A：受傷人數", value: "A" },
+                { text: "B：傷病者受傷的程度", value: "B" },
+                { text: "C：急救員人數", value: "C" },
+                { text: "D：現場是否安全", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 7:成人的正常呼吸為每分鐘多少次？",
+            options: [
+                { text: "A：10-12", value: "A" },
+                { text: "B：12-20", value: "B" },
+                { text: "C：20-24", value: "C" },
+                { text: "D：16-30", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 8:初步檢查傷者不包括：",
+            options: [
+                { text: "A：骨折情況", value: "A" },
+                { text: "B：清醒程度", value: "B" },
+                { text: "C：呼吸", value: "C" },
+                { text: "D：制止嚴重出血", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 9:保持氣道暢通的方法不包括：",
+            options: [
+                { text: "A：按額托顎", value: "A" },
+                { text: "B：復原臥式", value: "B" },
+                { text: "C：頭側向一邊", value: "C" },
+                { text: "D：半坐臥", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 10:以下哪項屬於感染控制的措施",
+            options: [
+                { text: "A：用酒精搓手液消毒雙手", value: "A" },
+                { text: "B：膠手套", value: "B" },
+                { text: "C：人工呼吸面膜", value: "C" },
+                { text: "D：以上全部皆是", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 11:下列哪一向不是窒息的徵狀",
+            options: [
+                { text: "A：面色發紺", value: "A" },
+                { text: "B：呼吸深而有聲", value: "B" },
+                { text: "C：大量出汗", value: "C" },
+                { text: "D：shiquzhijue", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 12:下列哪一向不是窒息的原因",
+            options: [
+                { text: "A：中毒", value: "A" },
+                { text: "B：腦震盪", value: "B" },
+                { text: "C：觸電", value: "C" },
+                { text: "D：足部骨折", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 13:所謂發紺是指傷病者的唇，指甲，眼臉及面色轉變成：",
+            options: [
+                { text: "A：灰白色", value: "A" },
+                { text: "B：藍紫色", value: "B" },
+                { text: "C：粉紅色", value: "C" },
+                { text: "D：瘀黑色", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 14:當發現一名小童於進食時哽塞，下列哪一向並非初期病徵？",
+            options: [
+                { text: "A：昏迷", value: "A" },
+                { text: "B：不能呼吸", value: "B" },
+                { text: "C：不能咳嗽", value: "C" },
+                { text: "D：不能說話", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 15:當發現哽塞的清醒傷病者時，替傷病者施行推腹法位置為",
+            options: [
+                { text: "A：肋骨邊線與胸骨交點上1隻手指位", value: "A" },
+                { text: "B：肚臍", value: "B" },
+                { text: "C：肋骨下 1/3", value: "C" },
+                { text: "D：肚臍對上少許的腹部上", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 16:若哽塞而清醒傷病者過於肥胖或是孕婦，應首先替傷病者進行哪一種哽塞處理法？",
+            options: [
+                { text: "A：拍背法", value: "A" },
+                { text: "B：推腹法", value: "B" },
+                { text: "C：壓胸法", value: "C" },
+                { text: "D：鼓勵咳嗽", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 17:呼吸系統不包括：",
+            options: [
+                { text: "A：肺", value: "A" },
+                { text: "B：心臟", value: "B" },
+                { text: "C：橫隔膜", value: "C" },
+                { text: "D：呼吸氣道", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 18:當施行心肺復甦法後，傷病者已恢復呼吸，你會立即：",
+            options: [
+                { text: "A：將傷病者安置復原臥式", value: "A" },
+                { text: "B：全身檢查傷病者", value: "B" },
+                { text: "C：將傷病者頭部轉側，保持氣道暢通", value: "C" },
+                { text: "D：繼續施行人工呼吸", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 19:於以下哪一向情況下，客廳之心肺復甦法？",
+            options: [
+                { text: "A：已致電【999】求助", value: "A" },
+                { text: "B：傷病者回覆自發性呼吸", value: "B" },
+                { text: "C：傷病者家人要求停止搶救，讓傷病者安息", value: "C" },
+                { text: "D：經過1小時搶救無效，讓傷病者假設已死亡", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 20:下列哪一項不是急救時打開氣道的方法？",
+            options: [
+                { text: "A：按額托顎法", value: "A" },
+                { text: "B：復原臥式", value: "B" },
+                { text: "C：側臥", value: "C" },
+                { text: "D：俯臥", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 21:成人胸部按壓法之正確位置是：",
+            options: [
+                { text: "A：胸骨的上半部", value: "A" },
+                { text: "B：胸骨正中", value: "B" },
+                { text: "C：胸骨的尖端", value: "C" },
+                { text: "D：胸骨下半部", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 22:只有一個救援人員對一名12歲傷病者施行心肺復甦法，其胸部按壓與人工呼吸比率為：",
+            options: [
+                { text: "A：30:2", value: "A" },
+                { text: "B：5：1", value: "B" },
+                { text: "C：15:2 or 5:1", value: "C" },
+                { text: "D：並無限制", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 23:當施行心肺復甦法有效時，傷病者可能會出現哪一項徵狀？",
+            options: [
+                { text: "A：面色好轉", value: "A" },
+                { text: "B：皮膚發熱", value: "B" },
+                { text: "C：瞳孔擴大", value: "C" },
+                { text: "D：不斷嘔吐", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 24:在心室纖維性顫動時，心室會：",
+            options: [
+                { text: "A：只輸出約50%之正常血液流量", value: "A" },
+                { text: "B：只輸出約75%之正常血液流量", value: "B" },
+                { text: "C：震顫但輸出約100%之正常血液流量", value: "C" },
+                { text: "D：震顫及不能把血液從心臟泵出", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 25:使用心臟去纖維性顫動法之目的為：",
+            options: [
+                { text: "A：取替心肺復甦法", value: "A" },
+                { text: "B：透過電流終止心臟所有不規則不協調的活動", value: "B" },
+                { text: "C：將粗糙的心室纖維顫動轉動為心室心跳過速", value: "C" },
+                { text: "D：確定心臟肌肉依然能將血泵出", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 26:自動心臟去纖維性顫動器之電極片應貼在成人傷病者的：",
+            options: [
+                { text: "A：胸骨之正中，另外為腹部", value: "A" },
+                { text: "B：左下邊，另外為右邊乳頭下側", value: "B" },
+                { text: "C：右鎖骨以下及左邊乳頭下側心尖部位", value: "C" },
+                { text: "D：胸部上，鎖骨以下（左右兩邊）", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 27:若你發現1名小學生仰臥在操場上及沒有呼吸，你應：",
+            options: [
+                { text: "A：避免使用顫器，以免發生危險", value: "A" },
+                { text: "B：陪伴傷病者，不做任何騷擾", value: "B" },
+                { text: "C：開始施行心臟去纖維性顫動法之程序，但不施行心肺復甦法", value: "C" },
+                { text: "D：開始施行心肺復甦法及啟動去顫器", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 28: 1名工人在水池中工作突然暈倒並停止呼吸，而其他的工人說這名工人是心臟病患者，你應：",
+            options: [
+                { text: "A：將傷病者移到水池以外的地方，並把他身上的水抹乾，施行心肺復甦法及使用去顫器", value: "A" },
+                { text: "B：只施行心肺復甦法", value: "B" },
+                { text: "C：毋需抹乾身體，立即施行心臟去纖維性顫動法", value: "C" },
+                { text: "D：等待救護員到場才開始施行急救", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 29:若你發現1名傷病者心臟病發作，而經分析後，分析結果為【不建議電擊】，你應該立刻：",
+            options: [
+                { text: "A：再次分析", value: "A" },
+                { text: "B：檢查脈搏，再次分析", value: "B" },
+                { text: "C：找別人幫助調較儀器", value: "C" },
+                { text: "D：施行心肺復甦法", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 30:下列哪一相不屬於生存之鏈（chain of survival）的環節？",
+            options: [
+                { text: "A：盡早通知傷病者親友", value: "A" },
+                { text: "B：盡早撥999緊急熱線求助", value: "B" },
+                { text: "C：盡早施行高質心肺復甦法", value: "C" },
+                { text: "D：盡早施行心臟去纖維性顫動法", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 31:有一名工友在船艙下工作超過了半小時仍未上回船面，你在呼喚他時，他並無作出反應。這時你應立即：",
+            options: [
+                { text: "A：找人幫手", value: "A" },
+                { text: "B：迅速下去救人", value: "B" },
+                { text: "C：袖手旁觀", value: "C" },
+                { text: "D：用3分鐘時間思考如何去做", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 32:將傷病者救上船面後，你發現傷病者倒在地上不動，而左邊小腿正在流血，你將會立即：",
+            options: [
+                { text: "A：止血", value: "A" },
+                { text: "B：全身檢查", value: "B" },
+                { text: "C：承高傷處", value: "C" },
+                { text: "D：確定清醒程度", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 33:你與朋友在餐廳吃晚餐時，發覺坐在你鄰枱一名男士突然倒臥在地上，你首先會：",
+            options: [
+                { text: "A：立即施行推腹法", value: "A" },
+                { text: "B：將傷病者放置復原臥式", value: "B" },
+                { text: "C：檢查病患有沒有反應", value: "C" },
+                { text: "D：立刻施行人工呼吸", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 34:一名老人因不慎滑倒在地上，引致前額大量出血，你上前檢查他的清新程度後，發現他人事不省，你立即找其他人報警求助，然後你必須首先要做的是：",
+            options: [
+                { text: "A：止血，包紮", value: "A" },
+                { text: "B：打開氣道，檢查呼吸", value: "B" },
+                { text: "C：替傷病者保暖", value: "C" },
+                { text: "D：將傷病者安置於復原臥式", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 35:處理人事不省的傷病者，最重要的原則是：",
+            options: [
+                { text: "A：保持傷病者神智清醒", value: "A" },
+                { text: "B：安慰傷病者", value: "B" },
+                { text: "C：保持傷病者氣道暢通", value: "C" },
+                { text: "D：對傷病者保暖", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 36:一名小童在滑梯頂跌下，當你檢查他的清醒程度時，你發覺他只能簡單回答問題，當要他思考是不但未能回答，更出現混亂的情況。他的清醒程度（AVPU）屬於：",
+            options: [
+                { text: "A：完全清醒", value: "A" },
+                { text: "B：對聲音有反應", value: "B" },
+                { text: "C：全無反應", value: "C" },
+                { text: "D：對痛楚有反應", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 37:當你已將傷病者安置於復原臥式，下列哪一向並非每分鐘檢查一次的項目？",
+            options: [
+                { text: "A：清醒程度", value: "A" },
+                { text: "B：呼吸", value: "B" },
+                { text: "C：血液循環表徵", value: "C" },
+                { text: "D：體溫", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 38:清醒程度的不同程度評估是：",
+            options: [
+                { text: "A：完全清醒，對聲音有反應，對痛楚有反應，全無反應", value: "A" },
+                { text: "B：完全清新，對聲音有反應，全無反應", value: "B" },
+                { text: "C：完全清新，對痛楚有反應，全無反應", value: "C" },
+                { text: "D：完全清新，全無反應", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 39:若一位行人突然暈倒地上。你應立即：",
+            options: [
+                { text: "A：確定傷病者的清醒程度，若是人事不省，便立即報警", value: "A" },
+                { text: "B：安置傷病者於復原臥式", value: "B" },
+                { text: "C：施行心肺復甦法", value: "C" },
+                { text: "D：打開氣道及檢查呼吸", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 40:有一名工人被一輛木頭車撞到，失去知覺2分鐘之後甦醒，而身體並無任何損傷，你應：",
+            options: [
+                { text: "A：送他入醫院接受檢查", value: "A" },
+                { text: "B：替他搽點藥油", value: "B" },
+                { text: "C：觀察兩小時，若再沒有暈倒，便可讓他自行回家", value: "C" },
+                { text: "D：一定要他平臥，頭側", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 41:下列哪一項不是人事不省得原因",
+            options: [
+                { text: "A：腦受政", value: "A" },
+                { text: "B：中風", value: "B" },
+                { text: "C：單純肋骨骨折", value: "C" },
+                { text: "D：糖尿病", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 42:處理人事不省的傷病者時，在完成DRABC之後的程序為：",
+            options: [
+                { text: "A：全身檢查", value: "A" },
+                { text: "B：檢查呼吸", value: "B" },
+                { text: "C：檢查清醒程度", value: "C" },
+                { text: "D：處理表面嚴重創傷", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 43:下列哪一項身體功能並非自主神經系統主管",
+            options: [
+                { text: "A：內臟感覺及運動", value: "A" },
+                { text: "B：心律調節", value: "B" },
+                { text: "C：血壓調節", value: "C" },
+                { text: "D：骨胳肌的運動", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 44:脊神經一共有多少對",
+            options: [
+                { text: "A：12", value: "A" },
+                { text: "B：18", value: "B" },
+                { text: "C：24", value: "C" },
+                { text: "D：31", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 45:復原臥式的優點是",
+            options: [
+                { text: "A：促使病傷者恢復清醒", value: "A" },
+                { text: "B：使傷病者更舒適", value: "B" },
+                { text: "C：方便留意呼吸，血液循環表徵", value: "C" },
+                { text: "D：防止嘔吐物倒流及舌倒後", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 46:下列哪一項不是普通昏厥（血管迷失神經性昏厥）的原因",
+            options: [
+                { text: "A：驚恐", value: "A" },
+                { text: "B：疲倦", value: "B" },
+                { text: "C：飢餓", value: "C" },
+                { text: "D：心傳導阻滯", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 47:下列哪項是普通昏厥（血迷失神經性昏厥）的徵狀？",
+            options: [
+                { text: "A：面色潮紅", value: "A" },
+                { text: "B：脈搏弱而慢", value: "B" },
+                { text: "C：脈搏強而慢", value: "C" },
+                { text: "D：對外界刺激完全沒反應", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 48:昏厥的定義是：",
+            options: [
+                { text: "A：血液循環減弱導致腦部中風", value: "A" },
+                { text: "B：因流入腦部的血液突然暫時減少而引起", value: "B" },
+                { text: "C：傷病者因腦部受損而對痛楚沒有反應", value: "C" },
+                { text: "D：腦部受到廣泛而短暫的震蕩", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 49:關於動脈，哪一項是不正確的？",
+            options: [
+                { text: "A：動脈壁堅韌而有彈性", value: "A" },
+                { text: "B：血液經此離開心臟流入身體各組織", value: "B" },
+                { text: "C：多數動脈運送的是含氧量高的血液", value: "C" },
+                { text: "D：肺動脈運送的是含氧量高的血液", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 50:：關於靜脈，哪一項是不正確的？",
+            options: [
+                { text: "A：任何流向心臟的血管均稱為靜脈", value: "A" },
+                { text: "B：體循環的靜脈所流的血含氧量較低而二氧化碳含量較高", value: "B" },
+                { text: "C：靜脈壁是最薄的", value: "C" },
+                { text: "D：内有杯狀活瓣，防止血液倒流", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 51:一人於烈酒後，嘔吐出咖啡渣樣的嘔吐物，並且神志不清，他可能：",
+            options: [
+                { text: "A：胃出血", value: "A" },
+                { text: "B：直腸出血", value: "B" },
+                { text: "C：肺部出血", value: "C" },
+                { text: "D：尿道出血", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 52:下列哪一項不是低血容性休克的原因？",
+            options: [
+                { text: "A：嚴重胃出血", value: "A" },
+                { text: "B：蜜蜂螫傷", value: "B" },
+                { text: "C：嚴重嘔吐", value: "C" },
+                { text: "D：嚴重燒傷", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 53:下列哪項不是大量出血的徵狀",
+            options: [
+                { text: "A：面青唇白", value: "A" },
+                { text: "B：皮膚乾燥", value: "B" },
+                { text: "C：呼吸加促", value: "C" },
+                { text: "D：脈搏快弱", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 54:下列哪項不是內出血的徵狀",
+            options: [
+                { text: "A：神智不清", value: "A" },
+                { text: "B：傷處有疼痛及觸痛", value: "B" },
+                { text: "C：排黑便", value: "C" },
+                { text: "D：呼吸緩慢", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 55:若傷病者從口部咳出鮮紅色帶泡的血液，內出血的部位可能是",
+            options: [
+                { text: "A：肝", value: "A" },
+                { text: "B：胃", value: "B" },
+                { text: "C：腸", value: "C" },
+                { text: "D：肺", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 56:在廁所內發現一名神智不清而面青唇白之傷病者，其糞便為黑色柏油狀，急救員應懷疑傷病者可能是：",
+            options: [
+                { text: "A：直腸出血", value: "A" },
+                { text: "B：腎臟出血", value: "B" },
+                { text: "C：十二指腸出血", value: "C" },
+                { text: "D：大腸出血", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 57:一名傷病者的小便帶有血，可能出血的部位是：",
+            options: [
+                { text: "A：大腸", value: "A" },
+                { text: "B：直腸", value: "B" },
+                { text: "C：泌尿道", value: "C" },
+                { text: "D：子宮", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 58:休克最早期之徵狀為：",
+            options: [
+                { text: "A：器官衰竭", value: "A" },
+                { text: "B：神智不清", value: "B" },
+                { text: "C：缺尿", value: "C" },
+                { text: "D：脈搏加促", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 59:若急救員對休克傷病者的傷勢有所懷疑，最好安置傷病者：",
+            options: [
+                { text: "A：仰臥及將下肢承高", value: "A" },
+                { text: "B：半坐臥", value: "B" },
+                { text: "C：仰臥及將頭肩部位承高", value: "C" },
+                { text: "D：仰臥", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 60:下列哪一項情況下出血並不會增加危險性",
+            options: [
+                { text: "A：傷病者患有血友病", value: "A" },
+                { text: "B：傷病者正在接受抗凝血藥物治療", value: "B" },
+                { text: "C：膝蓋碰撞受傷", value: "C" },
+                { text: "D：主要血管受損", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 61:下列哪一項是急救員應使用之止血方法？",
+            options: [
+                { text: "A：用煙絲填塞傷口", value: "A" },
+                { text: "B：傷病者正在受傷部位上緊紮", value: "B" },
+                { text: "C：將止血粉灑在傷口上", value: "C" },
+                { text: "D：直接用輔料壓著出血部位", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 62:一名大腿大量出血的傷病者在止血及包紮後，出現休克徵狀，但仍然清醒，應將傷病者處於什麼臥式？",
+            options: [
+                { text: "A：半坐臥式", value: "A" },
+                { text: "B：側臥", value: "B" },
+                { text: "C：仰臥", value: "C" },
+                { text: "D：復原臥式", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 63:急救員替傷病者進行止血時，發現他傷口上的敷料已滲滿血液，應：",
+            options: [
+                { text: "A：立即更換敷料", value: "A" },
+                { text: "B：於傷口上加壓", value: "B" },
+                { text: "C：於傷口第一塊敷料上再加敷料繼續施壓", value: "C" },
+                { text: "D：立即將傷病者仰臥，以減少出血量", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 64:創傷的傷病者最常見的休克原因是：",
+            options: [
+                { text: "A：低血容性休克", value: "A" },
+                { text: "B：心源性休克", value: "B" },
+                { text: "C：神經性休克", value: "C" },
+                { text: "D：敗血性休克", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 65:下列哪一項不是嚴重低血容性休克的徵象？",
+            options: [
+                { text: "A：蒼白", value: "A" },
+                { text: "B：意識正常", value: "B" },
+                { text: "C：皮膚冰冷", value: "C" },
+                { text: "D：冒汗", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 66:下列哪一種止血法有可能引致肢體的永久損傷",
+            options: [
+                { text: "A：直接加壓止血法", value: "A" },
+                { text: "B：抬高患肢止血法", value: "B" },
+                { text: "C：止血帶止血法", value: "C" },
+                { text: "D：間接壓法", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 67:下列哪一項不屬於心臟血管系統",
+            options: [
+                { text: "A：動脈", value: "A" },
+                { text: "B：靜脈", value: "B" },
+                { text: "C：微血管", value: "C" },
+                { text: "D：淋巴腺", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 68:成人的血量約為體重的：",
+            options: [
+                { text: "A：7%", value: "A" },
+                { text: "B：10%", value: "B" },
+                { text: "C：12%", value: "C" },
+                { text: "D：14%", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 69:下列哪一項並非敷料的作用？",
+            options: [
+                { text: "A：幫助傷口癒合", value: "A" },
+                { text: "B：保護傷口", value: "B" },
+                { text: "C：幫助止血", value: "C" },
+                { text: "D：吸收滲出血液", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 70:傷口的邊緣參差不齊，容易受感染，此為：",
+            options: [
+                { text: "A：割傷", value: "A" },
+                { text: "B：裂傷", value: "B" },
+                { text: "C：刺傷", value: "C" },
+                { text: "D：擦傷", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 71:被動物用爪抓傷，傷口參差不齊，而且容易受到感染，這屬於：",
+            options: [
+                { text: "A：割傷", value: "A" },
+                { text: "B：撕裂", value: "B" },
+                { text: "C：刺傷", value: "C" },
+                { text: "D：瘀傷", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 72:下列哪一項物品不可能作為臨時敷料",
+            options: [
+                { text: "A：清潔之被單", value: "A" },
+                { text: "B：清潔手帕", value: "B" },
+                { text: "C：棉花", value: "C" },
+                { text: "D：手巾", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 73:下列哪一項並非繃帶的作用",
+            options: [
+                { text: "A：保持直接壓力於傷口上", value: "A" },
+                { text: "B：避免受傷部位移動", value: "B" },
+                { text: "C：保持傷病者姿態優美", value: "C" },
+                { text: "D：幫助運送傷病者", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 74:胸部被刺傷之傷病者因安置於：",
+            options: [
+                { text: "A：仰臥且頭側向一邊", value: "A" },
+                { text: "B：仰臥", value: "B" },
+                { text: "C：俯臥", value: "C" },
+                { text: "D：半坐臥", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 75:若傷病者的身體被重物壓著的時間太久，身體就可能會產生：",
+            options: [
+                { text: "A：腎功能失效", value: "A" },
+                { text: "B：肝功能失效", value: "B" },
+                { text: "C：胰臟功能失效", value: "C" },
+                { text: "D：脾功能失效", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 76:處理鼻部受傷以致流鼻血的傷病者時，急救員應：",
+            options: [
+                { text: "A：讓傷病者把頭部仰高，用口呼吸，並緊捏鼻部柔軟部分", value: "A" },
+                { text: "B：勸喻傷病者不可忍著不打噴嚏", value: "B" },
+                { text: "C：讓傷病者把頭部仰高，用口呼吸，但切勿緊捏鼻部，方便血液流出", value: "C" },
+                { text: "D：讓傷病者把頭部向前傾，用口呼吸，並緊捏鼻部柔軟部分", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 77:下面那些物品適合遮蓋腹部傷口露出的腸臟？",
+            options: [
+                { text: "A：濕透無菌生理鹽水的紗布", value: "A" },
+                { text: "B：黏性膠布", value: "B" },
+                { text: "C：濕有稀釋消毒藥水的紗布", value: "C" },
+                { text: "D：清潔的乾棉花", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 78:胸部刺傷傷口出現：",
+            options: [
+                { text: "A：濕氣", value: "A" },
+                { text: "B：流出黏液", value: "B" },
+                { text: "C：逆理性呼吸", value: "C" },
+                { text: "D：吸氣性傷口", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 79:有一名建築工人從高處墮下，左足與身體分離，並大量出血暈倒在地上，最優先的急救程序為：",
+            options: [
+                { text: "A：找回斷肢，並用冰加水冷藏", value: "A" },
+                { text: "B：檢查呼吸", value: "B" },
+                { text: "C：替傷病者止血及包紮", value: "C" },
+                { text: "D：檢查有否骨折", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 80:異物入眼的處理方法為：",
+            options: [
+                { text: "A：輕力拭揉眼睛，試圖把異物拭出", value: "A" },
+                { text: "B：用適量清水由內向外沖洗", value: "B" },
+                { text: "C：用大量清水由外向內沖洗", value: "C" },
+                { text: "D：不斷用力眨眼", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 81：腦受壓的徵狀為：",
+            options: [
+                { text: "A：脈搏快而弱", value: "A" },
+                { text: "B：呼吸淺促", value: "B" },
+                { text: "C：脈搏慢而強", value: "C" },
+                { text: "D：皮膚濕冷", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 82:一名小童從巴士跌下，頭撞向地，你檢查時發現他面青唇白，皮膚濕冷，並記不起意外發生前後的經過，你診斷他是：",
+            options: [
+                { text: "A：昏厥", value: "A" },
+                { text: "B：腦震盪", value: "B" },
+                { text: "C：腦受壓", value: "C" },
+                { text: "D：休克", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 83:若牙齒脫落，適合處理牙根的液體不包括：",
+            options: [
+                { text: "A：消毒藥水", value: "A" },
+                { text: "B：電解質補充劑", value: "B" },
+                { text: "C：傷病者唾液", value: "C" },
+                { text: "D：鮮奶", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 84:下列哪一項並非消化系統的作用？",
+            options: [
+                { text: "A：吞食", value: "A" },
+                { text: "B：吸收", value: "B" },
+                { text: "C：過濾", value: "C" },
+                { text: "D：排泄", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 85:泌尿系統的器官並不包括下列哪一項？",
+            options: [
+                { text: "A：腎臟", value: "A" },
+                { text: "B：輸尿管", value: "B" },
+                { text: "C：膀胱", value: "C" },
+                { text: "D：肝臟", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 86:男性的生殖器官並不包括下列哪一項？",
+            options: [
+                { text: "A：陰囊", value: "A" },
+                { text: "B：陰阜", value: "B" },
+                { text: "C：尿道球腺", value: "C" },
+                { text: "D：副睪丸", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 87:當一名60歲步行上3樓後，突然心臟病發，現場除了你之外還有數人在旁。以下哪一項不是心臟病之徵狀？",
+            options: [
+                { text: "A：嘔心和出汗", value: "A" },
+                { text: "B：胸口有壓力", value: "B" },
+                { text: "C：呼吸緊促", value: "C" },
+                { text: "D：腿部有壓痛", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 88:心臟病發最危險是可引致：",
+            options: [
+                { text: "A：心臟出血", value: "A" },
+                { text: "B：極度痛楚", value: "B" },
+                { text: "C：神智不清", value: "C" },
+                { text: "D：心臟驟停", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 89:以下哪些步驟不是正確的處理方法",
+            options: [
+                { text: "A：找人報警", value: "A" },
+                { text: "B：松解頸，胸，腰部的緊身衣物", value: "B" },
+                { text: "C：給予飲食", value: "C" },
+                { text: "D：將傷病者半坐臥", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 90:若傷病者上有「脷底丸」，你應：",
+            options: [
+                { text: "A：協助傷病者含服", value: "A" },
+                { text: "B：切勿讓他服食", value: "B" },
+                { text: "C：將藥物一同帶到醫院才可服食", value: "C" },
+                { text: "D：看清楚說明書後並得救護員同意後方可給予服食", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 91:一名青年喝下半瓶火水企圖自殺，你會如何處理傷病者？",
+            options: [
+                { text: "A：用手挖他喉部刺激他嘔吐", value: "A" },
+                { text: "B：給予大量清水飲下", value: "B" },
+                { text: "C：給予半瓶鮮奶使它稀釋", value: "C" },
+                { text: "D：不給任何飲品，只維持呼吸", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 92:一名服毒傷病者，其口唇及口腔內有潰爛，你懷疑他是不是曾服食何種物質？",
+            options: [
+                { text: "A：強酸", value: "A" },
+                { text: "B：強酸或強鹼", value: "B" },
+                { text: "C：強鹼", value: "C" },
+                { text: "D：中性", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 93:以下哪一項不是常見的中毒途徑？",
+            options: [
+                { text: "A：口服", value: "A" },
+                { text: "B：咬傷或刺傷", value: "B" },
+                { text: "C：吸入", value: "C" },
+                { text: "D：身體植入", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 94:服用過量藥物的傷病者不可施行下列哪一項處理？",
+            options: [
+                { text: "A：保持傷病者氣道暢通", value: "A" },
+                { text: "B：盛著嘔吐物及速送院", value: "B" },
+                { text: "C：必須用手指挖喉，使之嘔吐", value: "C" },
+                { text: "D：必要時施行人工呼吸", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 95:以下哪一項不是血糖過低之徵狀？",
+            options: [
+                { text: "A：面青唇白", value: "A" },
+                { text: "B：皮膚濕冷", value: "B" },
+                { text: "C：呼吸有醋酮味", value: "C" },
+                { text: "D：脈搏快促", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 96:中風的病徵，病狀不包括：",
+            options: [
+                { text: "A：呼吸困難", value: "A" },
+                { text: "B：頭痛", value: "B" },
+                { text: "C：產生幻覺", value: "C" },
+                { text: "D：說話含糊", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 97:一名年齡約30歲男子向你申訴胸口壓痛，並且痛楚輻射至左臂及下頜，你應該懷疑他是：",
+            options: [
+                { text: "A：胸部陷傷", value: "A" },
+                { text: "B：心絞痛", value: "B" },
+                { text: "C：膽炎", value: "C" },
+                { text: "D：肋骨骨折", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 98:在等待救護員到達時，急救員應安置一名懷疑中風的清醒傷病者於：",
+            options: [
+                { text: "A：平臥", value: "A" },
+                { text: "B：半坐臥式", value: "B" },
+                { text: "C：復原臥式", value: "C" },
+                { text: "D：傷病者認為最舒適的體位", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 99:處理腦癲發作之傷病者不應：",
+            options: [
+                { text: "A：放置軟物於其口中", value: "A" },
+                { text: "B：保護傷病者，避免碰撞受傷", value: "B" },
+                { text: "C：讓傷病者在地上滾動", value: "C" },
+                { text: "D：移開有危險的物品", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 100:下述哪一項是高血糖昏迷的徵狀？",
+            options: [
+                { text: "A：面青唇白", value: "A" },
+                { text: "B：皮膚濕冷", value: "B" },
+                { text: "C：脈促而弱", value: "C" },
+                { text: "D：呼吸淺促", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 101:低血糖昏迷的徵狀為：",
+            options: [
+                { text: "A：面青唇白，皮膚濕冷，呼吸淺促，脈搏快促", value: "A" },
+                { text: "B：面色潮紅，皮膚乾燥，呼吸深沉，，脈搏快弱", value: "B" },
+                { text: "C：面青唇白，皮膚乾燥，呼吸深沉，脈強而慢", value: "C" },
+                { text: "D：面青唇白，皮膚濕冷，呼吸淺促，脈慢而弱", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 102:一名青年橫過馬路時被汽車撞到，經檢查後發覺傷病者右大腿近髖部劇痛，不能站立並申訴有小便需要。上述青年可能受何種損傷？",
+            options: [
+                { text: "A：右盆骨骨折", value: "A" },
+                { text: "B：右膝蓋骨骨折", value: "B" },
+                { text: "C：右大腿骨折", value: "C" },
+                { text: "D：右小腿骨折", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 103:若傷病者轉為昏迷，處理上述傷勢之首要程序為：",
+            options: [
+                { text: "A：檢查傷病者反應", value: "A" },
+                { text: "B：適當處理骨折處理", value: "B" },
+                { text: "C：若有出血先行止血", value: "C" },
+                { text: "D：檢查傷病者呼吸", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 104:下列哪一項不是一般骨折的徵狀？",
+            options: [
+                { text: "A：紅腫", value: "A" },
+                { text: "B：肢體可能縮短", value: "B" },
+                { text: "C：傷處失去正常活動能力", value: "C" },
+                { text: "D：失禁", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 105:胸部多處肋骨骨折可引致",
+            options: [
+                { text: "A：吸氣性傷口", value: "A" },
+                { text: "B：呼吸深而慢", value: "B" },
+                { text: "C：面色潮紅", value: "C" },
+                { text: "D：逆理性呼吸", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 106:大手掛不適用於處理骨折的部位是：",
+            options: [
+                { text: "A：手腕", value: "A" },
+                { text: "B：前臂", value: "B" },
+                { text: "C：手指", value: "C" },
+                { text: "D：上臂", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 107:一名傷病者膝部受傷，臥於地上，傷肢屈曲，無法伸直，急救員應：",
+            options: [
+                { text: "A：慢慢牽拉之傷肢伸直然後包紮", value: "A" },
+                { text: "B：維持屈曲姿勢，加上適量軟墊，然後固定", value: "B" },
+                { text: "C：按照小腿骨折處理", value: "C" },
+                { text: "D：安慰傷病者，但不用包紮", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 108:但檢查呼吸困難的傷病者時，發覺傷病者在呼氣時一邊胸部外脹，但於吸氣時凹陷，急救員應懷疑傷病者可能發生：",
+            options: [
+                { text: "A：嚴重肺部出血", value: "A" },
+                { text: "B：張力性氣胸", value: "B" },
+                { text: "C：多處肋骨骨折", value: "C" },
+                { text: "D：單純肋骨骨折", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 109:耳邊有透明液體流出，可能是：",
+            options: [
+                { text: "A：耳道受創", value: "A" },
+                { text: "B：鼻骨骨折", value: "B" },
+                { text: "C：顱底骨骨折", value: "C" },
+                { text: "D：下顎骨骨折", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 110:下列哪一項不是鎖骨骨折的徵狀？",
+            options: [
+                { text: "A：疼痛", value: "A" },
+                { text: "B：傷病者頭部側向健側", value: "B" },
+                { text: "C：腫脹", value: "C" },
+                { text: "D：傷病者頭部側向傷側", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 111:下列哪一項不是上臂骨折的徵狀？",
+            options: [
+                { text: "A：疼痛", value: "A" },
+                { text: "B：腫脹", value: "B" },
+                { text: "C：失去活動能力", value: "C" },
+                { text: "D：頭暈", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 112:下顎骨骨折時，傷病者不會有下列哪一項徵狀？",
+            options: [
+                { text: "A：口部緊閉", value: "A" },
+                { text: "B：傷處紅腫", value: "B" },
+                { text: "C：大量唾液（口水）流出", value: "C" },
+                { text: "D：說話困難", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 113:骨折的原因不包括：",
+            options: [
+                { text: "A：硬物直接撞擊", value: "A" },
+                { text: "B：間接暴力", value: "B" },
+                { text: "C：肌肉放鬆", value: "C" },
+                { text: "D：肌肉牽拉", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 114:骨骼的功能並不包括：",
+            options: [
+                { text: "A：支持作用", value: "A" },
+                { text: "B：運動作用", value: "B" },
+                { text: "C：保護作用", value: "C" },
+                { text: "D：傳導作用", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 115:肌肉系統並不包括：",
+            options: [
+                { text: "A：骨胳肌", value: "A" },
+                { text: "B：內臟肌", value: "B" },
+                { text: "C：呼吸肌", value: "C" },
+                { text: "D：心肌", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 116:往遠足途中，同行之十七歲朋伴突然暈倒，皮膚濕冷，面色蒼白，神智不清，脈搏快而弱，你懷疑他是：",
+            options: [
+                { text: "A：中暑", value: "A" },
+                { text: "B：熱衰竭", value: "B" },
+                { text: "C：昏暈", value: "C" },
+                { text: "D：中風", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 117:若傷病者出現熱痙攣，處理方法不包括：",
+            options: [
+                { text: "A：給予電解質飲品", value: "A" },
+                { text: "B：按摩痙攣之肌肉", value: "B" },
+                { text: "C：冷敷痙攣之肌肉", value: "C" },
+                { text: "D：用力拍打痙攣之肌肉", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 118:下列哪一項不是中暑的主因？",
+            options: [
+                { text: "A：身體不能利用出汗控制體溫", value: "A" },
+                { text: "B：長時間處於炎熱的空氣中", value: "B" },
+                { text: "C：流失身體的水分及鹽分", value: "C" },
+                { text: "D：不習慣長時間處於酷熱和濕度高的環境中", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 119:你是哪一向不是熱衰竭的症狀？",
+            options: [
+                { text: "A：面色朝紅", value: "A" },
+                { text: "B：脈搏促而弱", value: "B" },
+                { text: "C：體溫正常", value: "C" },
+                { text: "D：皮膚濕冷", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 120:以下項是中暑的症狀？",
+            options: [
+                { text: "A：面青唇白", value: "A" },
+                { text: "B：皮膚濕冷", value: "B" },
+                { text: "C：面色潮紅", value: "C" },
+                { text: "D：體溫正常", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 121:出現低溫症時皮膚呈現",
+            options: [
+                { text: "A：蒼白色", value: "A" },
+                { text: "B：深黃色", value: "B" },
+                { text: "C：淺粉紅色", value: "C" },
+                { text: "D：潮紅", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 122:中暑的急救處理方法不包括：",
+            options: [
+                { text: "A：維持[A.B.C]", value: "A" },
+                { text: "B：在傷病者兩腋放置濕冷水的海綿", value: "B" },
+                { text: "C：將衣物去除及降溫", value: "C" },
+                { text: "D：給傷病者飲用大量冰水", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 123:處理低溫症傷病者的方法不包括：",
+            options: [
+                { text: "A：安置傷病者於室內", value: "A" },
+                { text: "B：給予傷病者酒精飲品", value: "B" },
+                { text: "C：除去沾濕衣物", value: "C" },
+                { text: "D：使用暖毯", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 124:以下哪一種狀況最不可能是有減壓症引致？",
+            options: [
+                { text: "A：潛水後關節疼痛", value: "A" },
+                { text: "B：潛水後頭暈耳鳴", value: "B" },
+                { text: "C：潛水後雙腿無力，不能行走", value: "C" },
+                { text: "D：多次下潛後小腿肌肉痠軟和痙攣", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 125:遇溺者的急救處理方法不包括：",
+            options: [
+                { text: "A：清除口腔內之阻塞物，以保持氣道暢通", value: "A" },
+                { text: "B：替遇溺者推腹，清除肺及胃內的積水", value: "B" },
+                { text: "C：如遇溺者停止呼吸，替其施行心肺心復甦法", value: "C" },
+                { text: "D：置不省人事之遇溺者側臥", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 126:被蛇咬傷，應立即：",
+            options: [
+                { text: "A：在受傷部位的對上和對下之地方用繩緊紮", value: "A" },
+                { text: "B：割開傷口來放血", value: "B" },
+                { text: "C：制止傷病者活動，清洗及包紮傷口", value: "C" },
+                { text: "D：將傷病著扶行到安全地方，遠離事發地點", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 127:下列哪一項關於蛇毒的描述是錯的？",
+            options: [
+                { text: "A：青竹蛇毒可引致內出血及傷腫脹", value: "A" },
+                { text: "B：飯剷頭蛇毒可引致傷口附近肢體壞", value: "B" },
+                { text: "C：銀腳帶蛇毒可引致傷病者呼吸停頓", value: "C" },
+                { text: "D：應緊索傷口以減慢蛇毒之吸收", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 128:下列哪一項不是處理昆蟲螫傷的正確方法？",
+            options: [
+                { text: "A：用口吸啜傷口", value: "A" },
+                { text: "B：用咭片把傷口上之刺刮走", value: "B" },
+                { text: "C：冰敷傷口", value: "C" },
+                { text: "D：用清水沖洗傷口", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 129:下列哪一項不是處理水母螫傷的正確方法？",
+            options: [
+                { text: "A：用咭片把傷口上之觸鬚刮走", value: "A" },
+                { text: "B：小心用手把傷口上之觸鬚清除", value: "B" },
+                { text: "C：用海水沖洗傷口", value: "C" },
+                { text: "D：當水母觸鬚徹底清除後，給予傷病者可忍受熱度的熱水浸泡傷口", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 130:被石頭魚螫傷後，不應該：",
+            options: [
+                { text: "A：安排傷病者坐下或躺下休息", value: "A" },
+                { text: "B：用約45C熱水浸泡傷口", value: "B" },
+                { text: "C：要求上病者步行往醫院求助", value: "C" },
+                { text: "D：召喚救護車運送傷病者到醫院", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 131:一名中年男子衣物著火衝出屋外，當時只有你和數人在場。當你發現他義務著火衝出屋外時，你應立即：",
+            options: [
+                { text: "A：叫傷病者在地上打滾", value: "A" },
+                { text: "B：用扇把火撥熄", value: "B" },
+                { text: "C：用衣物將火包裹", value: "C" },
+                { text: "D：切勿行近病傷者", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 132:待會被撲滅後，傷病者仰臥地上並昏迷，你應立即：",
+            options: [
+                { text: "A：處理燒傷傷口", value: "A" },
+                { text: "B：施行人工呼吸", value: "B" },
+                { text: "C：處理出血傷口", value: "C" },
+                { text: "D：打開氣道，檢查呼吸", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 133:處理燒傷傷口時，可淋水於傷口上以降溫。但在下列情況應停止：",
+            options: [
+                { text: "A：傷病者清醒", value: "A" },
+                { text: "B：傷病著發抖", value: "B" },
+                { text: "C：傷病者申訴痛苦", value: "C" },
+                { text: "D：淋水超過1分鐘", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 134:去除傷病者身上金屬物品的目的是：",
+            options: [
+                { text: "A：代傷病者保管，以免遺失", value: "A" },
+                { text: "B：避免不必要的損壞", value: "B" },
+                { text: "C：防止皮膚擦損", value: "C" },
+                { text: "D：避免因金屬品導熱而加深燒傷", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 135:被酸性化學劑燒傷手掌，首先應：",
+            options: [
+                { text: "A：以清潔毛巾抹去化學劑", value: "A" },
+                { text: "B：以鹼性化學劑中和", value: "B" },
+                { text: "C：以大量流動清水沖洗傷口", value: "C" },
+                { text: "D：用非黏貼的敷料覆蓋，避免與空氣接觸", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 136:嚴重燒傷或燙傷會導致下列哪一項情況？",
+            options: [
+                { text: "A：過敏性休克", value: "A" },
+                { text: "B：神經性休克", value: "B" },
+                { text: "C：心源性休克？", value: "C" },
+                { text: "D：低血容性休克", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 137:被電燒傷可能引致：",
+            options: [
+                { text: "A：骨折", value: "A" },
+                { text: "B：慢性腎衰竭", value: "B" },
+                { text: "C：心肌梗塞", value: "C" },
+                { text: "D：失憶", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 138:下面哪一項是屬於燒傷（非燙傷或灼傷）？",
+            options: [
+                { text: "A：火傷", value: "A" },
+                { text: "B：滾油", value: "B" },
+                { text: "C：乾冰", value: "C" },
+                { text: "D：蒸氣", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 139:一名傷病者被蒸氣燙傷後，前胸超過10%紅腫，其燙傷程度為：",
+            options: [
+                { text: "A：第一程度", value: "A" },
+                { text: "B：第二程度", value: "B" },
+                { text: "C：第三程度", value: "C" },
+                { text: "D：不可分類", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 140:電燒傷對人的損害，最嚴重是引致：",
+            options: [
+                { text: "A：肢體肌肉痙攣", value: "A" },
+                { text: "B：燒傷", value: "B" },
+                { text: "C：骨折", value: "C" },
+                { text: "D：呼吸及心跳停止", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 141:下列哪一項為處理燙傷傷病者之急救措施？？",
+            options: [
+                { text: "A：用流動清水將燙傷部位沖洗", value: "A" },
+                { text: "B：塗抹藥物", value: "B" },
+                { text: "C：冰敷燙傷部位", value: "C" },
+                { text: "D：刺穿水泡", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 142:下列哪一項不屬於嚴重燒傷？",
+            options: [
+                { text: "A：10%皮膚燒傷", value: "A" },
+                { text: "B：面部燒傷", value: "B" },
+                { text: "C：第二程度燒傷傷病者", value: "C" },
+                { text: "D：年長燒傷傷病者", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 143:逸民小童被沸水淋傷左前臂和左前胸，傷口呈現白蠟色，並無痛苦，但面色蒼白，呼吸淺促，他燒傷程度是：",
+            options: [
+                { text: "A：第一程度燒傷", value: "A" },
+                { text: "B：第二程度燒傷", value: "B" },
+                { text: "C：第三程度燒傷", value: "C" },
+                { text: "D：無法分辨", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 144:燒傷傷口呈現紅、腫及有水泡，其燒傷程度為：",
+            options: [
+                { text: "A：第一程度燒傷", value: "A" },
+                { text: "B：第二程度燒傷", value: "B" },
+                { text: "C：第三程度燒傷", value: "C" },
+                { text: "D：第一或第二程度燒傷皆對", value: "D" }
+            ],
+            answer: "B",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 145:若一名傷病者被燒傷左前臂、左小腿及前胸，該傷病受傷面積約為：",
+            options: [
+                { text: "A：9%", value: "A" },
+                { text: "B：13.5%", value: "B" },
+                { text: "C：22.5%", value: "C" },
+                { text: "D：27%", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 146:嚴重燒傷後，傷病者致命的原因是：",
+            options: [
+                { text: "A：休克", value: "A" },
+                { text: "B：嚴重痛處", value: "B" },
+                { text: "C：骨折", value: "C" },
+                { text: "D：暈眩", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 147:皮膚的功能並不包括：",
+            options: [
+                { text: "A：防止水分散失", value: "A" },
+                { text: "B：防止細菌入侵", value: "B" },
+                { text: "C：調節體溫", value: "C" },
+                { text: "D：製造維生素", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 148:下列哪一項並非運送傷病者時因考慮的因素？",
+            options: [
+                { text: "A：現場環境的穩定性", value: "A" },
+                { text: "B：急救員的數量", value: "B" },
+                { text: "C：可運用的物資", value: "C" },
+                { text: "D：傷病者性別", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 149:下列哪一項並非抬起傷病者時所採用之正確姿勢？",
+            options: [
+                { text: "A：兩足合併站立", value: "A" },
+                { text: "B：背部和頭部挺直", value: "B" },
+                { text: "C：將重量貼近身體", value: "C" },
+                { text: "D：用肩部支持重量", value: "D" }
+            ],
+            answer: "A",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 150:徒手搬運方法不適用於：",
+            options: [
+                { text: "A：緊急搶救傷病者", value: "A" },
+                { text: "B：運送短距離路程的傷病者", value: "B" },
+                { text: "C：清醒而沒有骨折的生病者", value: "C" },
+                { text: "D：懷疑脊椎受傷的傷病者，現場沒有危險", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 151:背負法不適用於：",
+            options: [
+                { text: "A：老弱傷病者", value: "A" },
+                { text: "B：年幼傷病者", value: "B" },
+                { text: "C：昏迷傷病者", value: "C" },
+                { text: "D：長途運送", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 152:於濃煙之環境下，可使用哪種方法搬運傷病者？",
+            options: [
+                { text: "A：扶行法", value: "A" },
+                { text: "B：背負法", value: "B" },
+                { text: "C：爬行法", value: "C" },
+                { text: "D：手抱法", value: "D" }
+            ],
+            answer: "C",
+            answeredCorrectly: false
+        },
+        {
+            question: "Question 153:急救員獨自搬運一名清醒而左小腿輕微出血的傷病者，可使用：",
+            options: [
+                { text: "A：扶行法", value: "A" },
+                { text: "B：背負法", value: "B" },
+                { text: "C：手抱法", value: "C" },
+                { text: "D：以上方法皆可", value: "D" }
+            ],
+            answer: "D",
+            answeredCorrectly: false
+        },
+
+
+
+    ];
+
+    const restartButton = document.getElementById('restartQuiz');
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        correctAnswers = 0;
+        showQuestion();
+        scoreElement.textContent = '';
+        prevButton.style.display = 'none';
+        restartButton.style.display = 'none';
+        nextButton.style.display = 'block'; // Ensure next button is displayed
+        restartButton.style.display = 'block';
+    }
+restartButton.addEventListener('click', restartQuiz);
+
+    let currentQuestion = 0;
+    let correctAnswers = 0;
+
+    const questionElement = document.querySelector('.question');
+    const optionsElement = document.querySelector('.options');
+    const nextButton = document.getElementById('nextQuestion');
+    const prevButton = document.getElementById('prevQuestion');
+    const pageNumberElement = document.querySelector('.page-number');
+    const scoreElement = document.getElementById('score');
+
+    function showQuestion() {
+        questionElement.textContent = questions[currentQuestion].question;
+        optionsElement.innerHTML = '';
+        questions[currentQuestion].options.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option.text;
+            button.addEventListener('click', () => selectOption(option.value));
+            optionsElement.appendChild(button);
+        });
+
+        pageNumberElement.textContent = `${currentQuestion + 1}/${questions.length}`;
+    }
+
+    function selectOption(selectedOption) {
+        const correctAnswer = questions[currentQuestion].answer;
+        const selectedButton = event.target;
+        
+        if (selectedOption === correctAnswer && !questions[currentQuestion].answeredCorrectly) {
+            selectedButton.classList.add('correct');
+            questions[currentQuestion].answeredCorrectly = true;
+            correctAnswers++;
+        } else {
+            selectedButton.classList.add('wrong');
+        }
+
+        nextButton.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            showQuestion();
+            prevButton.style.display = 'block';
+        } else {
+            scoreElement.textContent = `Score: ${correctAnswers}/${questions.length}`;
+            alert(`Quiz completed! Your score: ${correctAnswers}/${questions.length}`);
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            showQuestion();
+        }
+        if (currentQuestion === 0) {
+            prevButton.style.display = 'none';
+        }
+    }
+
+    nextButton.addEventListener('click', nextQuestion);
+    prevButton.addEventListener('click', prevQuestion);
+
+    showQuestion();
+</script>
+</body>
+</html>
