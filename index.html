@@ -1829,17 +1829,23 @@ restartButton.addEventListener('click', restartQuiz);
         pageNumberElement.textContent = `${currentQuestion + 1}/${questions.length}`;
     }
 
-    function selectOption(selectedOption) {
+function selectOption(selectedOption) {
     const correctAnswer = questions[currentQuestion].answer;
     const selectedButton = event.target;
 
-    if (selectedOption === correctAnswer && !questions[currentQuestion].answeredCorrectly) {
+    if (selectedOption === correctAnswer) {
         selectedButton.classList.add('correct');
         questions[currentQuestion].answeredCorrectly = true;
         correctAnswers++;
-    } else if (selectedOption !== correctAnswer && !questions[currentQuestion].answeredCorrectly) {
+    } else {
         selectedButton.classList.add('wrong');
     }
+
+    // Disable the ability to select an option after it has been selected
+    const optionButtons = document.querySelectorAll('.options button');
+    optionButtons.forEach(button => {
+        button.disabled = true;
+    });
 
     nextButton.style.display = 'block';
 }
