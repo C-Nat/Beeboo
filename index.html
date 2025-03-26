@@ -1830,19 +1830,19 @@ restartButton.addEventListener('click', restartQuiz);
     }
 
     function selectOption(selectedOption) {
-        const correctAnswer = questions[currentQuestion].answer;
-        const selectedButton = event.target;
-        
-        if (selectedOption === correctAnswer && !questions[currentQuestion].answeredCorrectly) {
-            selectedButton.classList.add('correct');
-            questions[currentQuestion].answeredCorrectly = true;
-            correctAnswers++;
-        } else {
-            selectedButton.classList.add('wrong');
-        }
+    const correctAnswer = questions[currentQuestion].answer;
+    const selectedButton = event.target;
 
-        nextButton.style.display = 'block';
+    if (selectedOption === correctAnswer && !questions[currentQuestion].answeredCorrectly) {
+        selectedButton.classList.add('correct');
+        questions[currentQuestion].answeredCorrectly = true;
+        correctAnswers++;
+    } else if (selectedOption !== correctAnswer && !questions[currentQuestion].answeredCorrectly) {
+        selectedButton.classList.add('wrong');
     }
+
+    nextButton.style.display = 'block';
+}
 
     function nextQuestion() {
         currentQuestion++;
